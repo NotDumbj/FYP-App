@@ -58,3 +58,5 @@ temp/
 # User uploads
 server/uploads/*
 !server/uploads/.gitkeep
+
+public/
