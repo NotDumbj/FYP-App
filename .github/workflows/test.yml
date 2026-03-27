@@ -1,0 +1,47 @@
+name: Run Selenium Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Start Backend
+        run: |
+          cd backend
+          npm install
+          npm start &
+      
+      - name: Start Frontend
+        run: |
+          cd frontend
+          npm install
+          npm start &
+
+      - name: Wait for App to Load
+        run: sleep 10
+
+      - name: Run Tests
+        run: node tests/runTests.js

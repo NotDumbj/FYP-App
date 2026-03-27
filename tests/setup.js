@@ -9,6 +9,9 @@ async function buildDriver() {
     options.addArguments("--disable-save-password-bubble"); // 🔥 IMPORTANT
     options.addArguments("--disable-password-manager-reauthentication");
     options.addArguments("--disable-features=PasswordLeakDetection");
+    options.addArguments("--headless");
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
 
     return await new Builder()
         .forBrowser("chrome")
