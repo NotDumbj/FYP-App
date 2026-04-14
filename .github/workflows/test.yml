@@ -67,6 +67,9 @@ jobs:
           cd server
           node seed.js
 
+      - name: Wait after seed
+        run: sleep 5
+
       - name: Install Test Dependencies
         run: |
           cd tests
