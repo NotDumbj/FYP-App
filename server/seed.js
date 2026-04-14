@@ -21,6 +21,18 @@ async function seed() {
     // =========================
     // USERS
     // =========================
+    const bcrypt = require("bcrypt");
+
+    const hashedPassword = await bcrypt.hash("2coco2", 10);
+
+    await User.create({
+    buid: "01-131232-062",
+    email: "Jibran@crystalsystem.com",
+    password: hashedPassword,
+    role: "student",
+    profile: { fullName: "Muhammad Jibran" }
+    });
+
     const users = await User.insertMany([
       {
         buid: "01-TEST-001",
@@ -117,6 +129,28 @@ async function seed() {
         type: "report",
         status: "submitted"
       }
+    ]);
+
+
+    // =========================
+    // RESOURCES
+    // =========================
+
+    await Resource.insertMany([
+        {
+            title: "Project Proposal",
+            fileUrl: "http://localhost:5000/uploads/sample.pdf",
+            deadline: new Date("2026-04-20"),
+            uploadedBy: coordinatorId, // use seeded coordinator _id
+            phase: "proposal"
+        },
+        {
+            title: "Upload Proposal",
+            fileUrl: "http://localhost:5000/uploads/sample2.docx",
+            deadline: new Date("2026-04-25"),
+            uploadedBy: coordinatorId,
+            phase: "proposal"
+        }
     ]);
 
     console.log("✅ Database Seeded Successfully");
