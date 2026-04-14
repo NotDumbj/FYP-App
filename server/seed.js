@@ -21,16 +21,16 @@ async function seed() {
     // =========================
     // USERS
     // =========================
-    const bcrypt = require("bcrypt");
-
-    const hashedPassword = await bcrypt.hash("2coco2", 10);
-
     await User.create({
-    buid: "01-131232-062",
-    email: "Jibran@crystalsystem.com",
-    password: hashedPassword,
-    role: "student",
-    profile: { fullName: "Muhammad Jibran" }
+        _id: "693896276045e1cee4be29d8",
+        buid: "01-131232-062",
+        email: "Jibran@crystalsystem.com",
+        password: "$2b$10$hSuEgDYqjkZAx2S1cRx09uXiDs10cJ1D6HORInUIA7Qwus7I3lEkS",
+        role: "student",
+        profile: {
+            fullName: "Muhammad Jibran"
+        },
+        availability: []
     });
 
     const users = await User.insertMany([
