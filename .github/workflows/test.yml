@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       # Install wait-on
       - name: Install wait-on
@@ -39,6 +39,12 @@ jobs:
           cd client
           npm install
 
+      - name: Create .env file
+        run: |
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> server/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> server/.env
+          echo "PORT=5000" >> server/.env
+
       - name: Start Server
         run: |
           cd server
@@ -51,10 +57,10 @@ jobs:
 
       # ✅ PROPER WAIT (IMPORTANT)
       - name: Wait for Backend
-        run: wait-on http://localhost:5000
+        run: wait-on http://localhost:5000 --timeout 60000
 
       - name: Wait for Frontend
-        run: wait-on http://localhost:3000
+        run: wait-on http://localhost:3000 --timeout 60000
 
       - name: Install Test Dependencies
         run: |
