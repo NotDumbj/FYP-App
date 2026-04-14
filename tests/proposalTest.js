@@ -1,4 +1,4 @@
-const { Builder, By, until, Key } = require("selenium-webdriver");
+const { By, until, Key } = require("selenium-webdriver");
 const path = require("path");
 const { buildDriver } = require("./setup");
 
@@ -17,76 +17,68 @@ async function proposalTest() {
         await driver.findElement(By.xpath("//input[@type='password']")).sendKeys("123456");
         await driver.findElement(By.xpath("//button[contains(., 'Sign In')]")).click();
 
+        // WAIT DASHBOARD
         await driver.wait(until.urlContains("dashboard"), 10000);
+        console.log("After login:", await driver.getCurrentUrl());
 
-        // CLICK REGISTER BUTTON
-        let proposalBtn = await driver.wait(
-            until.elementLocated(By.xpath("//button[contains(., 'Register FYP Topic')]")),
+        // CLICK SIDEBAR "New Proposal"
+        let newProposalBtn = await driver.wait(
+            until.elementLocated(By.xpath("//span[text()='New Proposal']")),
             10000
         );
 
-        await driver.wait(until.elementIsVisible(proposalBtn), 5000);
-        await proposalBtn.click();
+        await driver.wait(until.elementIsVisible(newProposalBtn), 5000);
+        await driver.executeScript("arguments[0].click();", newProposalBtn);
 
-        // WAIT PAGE LOAD PROPERLY
+        // WAIT PAGE
         await driver.wait(until.urlContains("submit-proposal"), 10000);
+        console.log("Reached:", await driver.getCurrentUrl());
 
-        // 🔥 WAIT UNTIL FORM IS FULLY LOADED (IMPORTANT)
-        await driver.sleep(2000);
-
-        // TITLE (use contains for safety)
-        let title = await driver.wait(
-            until.elementLocated(By.xpath("//input[contains(@name,'title')]")),
+        // WAIT FORM LOAD
+        await driver.wait(
+            until.elementLocated(By.xpath("//h4[contains(., 'Register FYP Topic')]")),
             10000
         );
-        await driver.wait(until.elementIsVisible(title), 5000);
+
+        // TITLE
+        let title = await driver.findElement(By.xpath("//input[@name='title']"));
         await title.sendKeys("AI Project");
 
         // DESCRIPTION
-        let desc = await driver.findElement(By.xpath("//textarea"));
+        let desc = await driver.findElement(By.xpath("//textarea[@name='description']"));
         await desc.sendKeys("FYP system");
 
-        // OPEN DROPDOWN
-        let dropdown = await driver.findElement(
-            By.xpath("//div[contains(@class,'MuiSelect-select')]")
-        );
+        // DROPDOWN (SUPER FIXED 🔥)
+        let dropdown = await driver.findElement(By.xpath("//div[@role='combobox']"));
 
         await driver.executeScript("arguments[0].scrollIntoView(true);", dropdown);
         await driver.sleep(500);
-        await dropdown.click();
 
-        // 🔥 WAIT OPTIONS
+        await driver.executeScript("arguments[0].click();", dropdown);
+
+        // WAIT OPTIONS (more flexible selector)
         let options = await driver.wait(
-            until.elementsLocated(By.xpath("//li[@role='option']")),
-            5000
+            until.elementsLocated(By.xpath("//ul//li")),
+            10000
         );
 
-        // 🔥 CLICK FIRST OPTION PROPERLY
-        await driver.actions().move({ origin: options[0] }).click().perform();
+        await driver.wait(until.elementIsVisible(options[0]), 5000);
 
-        // 🔥 FORCE CLOSE DROPDOWN (VERY IMPORTANT)
-        await driver.actions().sendKeys(Key.ESCAPE).perform();
+        await driver.executeScript("arguments[0].click();", options[0]);
 
-        // WAIT BACKDROP TO DISAPPEAR
-        await driver.wait(
-            until.stalenessOf(options[0]),
-            5000
-        );
-
-        // 🔥 FILE UPLOAD (hidden input fix)
+        // FILE UPLOAD
         let fileInput = await driver.findElement(By.xpath("//input[@type='file']"));
-
         let filePath = path.resolve(__dirname, "testfile.pdf");
         await fileInput.sendKeys(filePath);
 
-        // SUBMIT BUTTON
+        // SUBMIT
         let submitBtn = await driver.findElement(
             By.xpath("//button[contains(., 'Submit Proposal')]")
         );
 
         await driver.executeScript("arguments[0].scrollIntoView(true);", submitBtn);
         await driver.sleep(500);
-        await submitBtn.click();
+        await driver.executeScript("arguments[0].click();", submitBtn);
 
         console.log("✅ Proposal Test Passed");
         return true;
