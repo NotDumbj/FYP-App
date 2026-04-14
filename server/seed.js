@@ -6,6 +6,7 @@ const User = require("./models/User");
 const Project = require("./models/Project");
 const Submission = require("./models/Submission");
 const Settings = require("./models/Settings");
+const Resource = require("./models/Resource");
 
 async function seed() {
   try {
@@ -79,6 +80,7 @@ async function seed() {
 
     const student = users.find(u => u.role === "student");
     const supervisor = users.find(u => u.role === "supervisor");
+    const coordinator = users.find(u => u.role === "coordinator");
 
     // =========================
     // SETTINGS
@@ -137,20 +139,20 @@ async function seed() {
     // =========================
 
     await Resource.insertMany([
-        {
-            title: "Project Proposal",
-            fileUrl: "http://localhost:5000/uploads/sample.pdf",
-            deadline: new Date("2026-04-20"),
-            uploadedBy: coordinatorId, // use seeded coordinator _id
-            phase: "proposal"
-        },
-        {
-            title: "Upload Proposal",
-            fileUrl: "http://localhost:5000/uploads/sample2.docx",
-            deadline: new Date("2026-04-25"),
-            uploadedBy: coordinatorId,
-            phase: "proposal"
-        }
+      {
+        title: "Project Proposal",
+        fileUrl: "http://localhost:5000/uploads/sample.pdf",
+        deadline: new Date("2026-04-20"),
+        uploadedBy: coordinator._id,
+        phase: "proposal"
+      },
+      {
+        title: "Upload Proposal",
+        fileUrl: "http://localhost:5000/uploads/sample2.docx",
+        deadline: new Date("2026-04-25"),
+        uploadedBy: coordinator._id,
+        phase: "proposal"
+      }
     ]);
 
     console.log("✅ Database Seeded Successfully");
